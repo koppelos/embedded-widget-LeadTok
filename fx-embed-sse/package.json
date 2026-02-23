@@ -4,7 +4,8 @@
   "description": "Embeddable FX rates widget (iframe + SSE) using Frankfurter API",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --watch server.js --watch public --ext js,html,css --exec \"node server.js\"",
+    "dev": "node scripts/dev.mjs",
+    "dev:raw": "nodemon --watch server.js --watch public --watch src --ext js,html,css --exec \"node server.js\"",
     "start": "node server.js",
     "test": "node --test"
   },

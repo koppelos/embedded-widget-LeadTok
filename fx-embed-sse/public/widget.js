@@ -14,7 +14,7 @@
     iframe.title = "FX Rates Widget";
     iframe.style.width = "100%";
     iframe.style.maxWidth = "420px";
-    iframe.style.height = debug === "1" ? "350px" : "210px";
+    iframe.style.height = debug === "1" ? "380px" : "210px";
     iframe.style.border = "0";
     iframe.style.borderRadius = "12px";
     iframe.style.overflow = "hidden";

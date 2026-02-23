@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Node.js
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build / coverage
+dist/
+build/
+coverage/
+.nyc_output/
+
+# Env / local config
+.env
+.env.local
+.env.*.local
+
+# Editor / tooling
+.idea/
+.vscode/
+
+# Local Firebase playground (ignored from repo)
+firebase-hosting/
