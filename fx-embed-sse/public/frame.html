@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FX Widget</title>
+    <link rel="stylesheet" href="/frame.css" />
+  </head>
+  <body>
+    <main class="card">
+      <header class="top">
+        <div class="title-wrap">
+          <div id="h" class="title">FX</div>
+          <div id="meta" class="meta">—</div>
+        </div>
+        <div id="status" class="badge warn">connecting…</div>
+      </header>
+
+      <section class="grid">    
+        <table class="tbl">
+          <thead>
+            <tr><th>Waluta</th><th class="th-right">PLN</th></tr>
+          </thead>
+          <tbody id="t"></tbody>
+        </table>
+      </section>
+
+      <pre id="dbg" class="dbg" style="display:none"></pre>
+    </main>
+
+    <script src="/frame.js" defer></script>
+  </body>
+</html>
