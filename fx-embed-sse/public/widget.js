@@ -1,11 +1,14 @@
 (function () {
+  // Capture this once while the script is executing; it can be null later.
+  const scriptElAtLoad = document.currentScript;
+  const backendOrigin = scriptElAtLoad
+    ? new URL(scriptElAtLoad.src, window.location.href).origin
+    : window.location.origin;
+
   function initOne(host) {
     const base = (host.dataset.base || "PLN").toUpperCase();
     const symbols = (host.dataset.symbols || "EUR,USD,CHF,GBP,DKK").toUpperCase();
     const debug = host.dataset.debug === "1" ? "1" : "0";
-
-    const scriptEl = document.currentScript;
-    const backendOrigin = scriptEl ? new URL(scriptEl.src).origin : window.location.origin;
 
     const iframe = document.createElement("iframe");
     iframe.title = "FX Rates Widget";

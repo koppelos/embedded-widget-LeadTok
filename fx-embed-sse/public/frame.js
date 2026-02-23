@@ -10,9 +10,16 @@ const t = document.getElementById("t");
 const meta = document.getElementById("meta");
 const badge = document.getElementById("status");
 const dbg = document.getElementById("dbg");
+const thVal = document.getElementById("th-val");
 
 if (debug && dbg) dbg.style.display = "block";
-h.textContent = base === "PLN" ? "Kursy względem PLN" : `1 ${base} = ?`;
+if (base === "PLN") {
+  h.textContent = "Kursy względem PLN";
+  if (thVal) thVal.textContent = "PLN";
+} else {
+  h.textContent = `1 ${base} = ...`;
+  if (thVal) thVal.textContent = "Rate";
+}
 
 function setBadge(text, cls) {
   badge.textContent = text;
@@ -114,11 +121,11 @@ function render(r) {
       addRow(`1 ${sym}`, sym, pln);
     }
   } else {
-    // Normal: 1 base = rate[sym] sym (not used in your PLN view, but kept)
+    // Normal: 1 base = rate[sym] (units vary by row symbol)
     for (const sym of order) {
       const v = Number(rates[sym]);
       if (!Number.isFinite(v)) continue;
-      addRow(`1 ${sym}`, sym, v);
+      addRow(sym, sym, v);
     }
   }
 
