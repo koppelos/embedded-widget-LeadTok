@@ -1,7 +1,7 @@
 (function () {
-  // Capture this once while the script is executing; it can be null later.
-  const scriptElAtLoad = document.currentScript;
-  const backendOrigin = scriptElAtLoad
+    // auto detect backend origin from the script URL, so iframe always points to the same server
+  const scriptElAtLoad = document.currentScript; 
+  const backendOrigin = scriptElAtLoad 
     ? new URL(scriptElAtLoad.src, window.location.href).origin
     : window.location.origin;
 
@@ -10,6 +10,7 @@
     const symbols = (host.dataset.symbols || "EUR,USD,CHF,GBP,DKK").toUpperCase();
     const debug = host.dataset.debug === "1" ? "1" : "0";
 
+    //set iframe
     const iframe = document.createElement("iframe");
     iframe.title = "FX Rates Widget";
     iframe.style.width = "100%";
@@ -31,7 +32,7 @@
   }
 
   function init() {
-    // wersja pro: wspiera wiele widgetów, ale dalej działa z #fx-widget
+    
     const hosts = document.querySelectorAll("#fx-widget, .fx-widget");
     hosts.forEach(initOne);
   }

@@ -18,6 +18,7 @@ const config = loadConfig(process.env);
 const logEvent = createLogger();
 
 const app = express();
+// needed when running behind Cloud Run and reverse proxies
 app.set("trust proxy", config.trustProxy);
 
 const ratesService = createRatesService({
@@ -62,6 +63,7 @@ app.use(
 app.use(
   compression({
     filter: (req, res) => {
+      // SSE must stay unbuffered - compression delays event delivery
       if (req.path === "/sse/rates") return false;
       return compression.filter(req, res);
     },
@@ -88,6 +90,7 @@ sseHub.startBroadcast();
 const server = app.listen(config.port);
 
 function shutdown() {
+  // shutdown for container/platform stop signals
   sseHub.stopBroadcast();
   server.close(() => process.exit(0));
   setTimeout(() => process.exit(1), 5_000).unref();

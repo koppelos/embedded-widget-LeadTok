@@ -17,6 +17,7 @@ export function createRouteHandlers({ publicDir, config, security, ratesService,
   }
 
   function frame(req, res) {
+    // HTML iframe entrypoint
     if (security.forbidIfBlocked(req, res, { route: "/frame" })) return;
 
     res.setHeader(
@@ -42,6 +43,7 @@ export function createRouteHandlers({ publicDir, config, security, ratesService,
   }
 
   async function sseRates(req, res) {
+    // main SSE stream endpoint with origin protection, and connection limits
     if (security.forbidIfBlocked(req, res, { allowSelf: true, route: "/sse/rates" })) return;
 
     const ip = getClientIp(req);

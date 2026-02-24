@@ -114,7 +114,7 @@ body{
   background: rgba(0,0,0,.25);
 }
 
-/* trend arrows + flash */
+
 .sym{ white-space:nowrap; }
 .val{
   text-align:right;
@@ -128,8 +128,8 @@ body{
   font-weight:800;
   opacity:.95;
 }
-.val .arrow.up{ color: #34d399; }   /* green */
-.val .arrow.down{ color: #fb7185; } /* red */
+.val .arrow.up{ color: #34d399; }  
+.val .arrow.down{ color: #fb7185; } 
 .val .arrow.same{ color: rgba(234,240,255,.55); }
 
 .val.flash-up{
@@ -148,7 +148,7 @@ body{
   100%{ background: transparent; }
 }
 
-/* make flash look nice */
+
 .tbl tbody td.val{
   border-radius:10px;
   padding-right:10px;

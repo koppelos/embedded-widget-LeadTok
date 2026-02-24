@@ -11,6 +11,7 @@ function splitCsv(value) {
 }
 
 function parseExactOrigin(raw, label) {
+  // accepting only exact origins
   const value = String(raw || "").trim();
   if (!value) throw new Error(`${label} cannot be empty`);
   if (value.includes("*")) throw new Error(`${label} cannot contain wildcard (*)`);
@@ -40,6 +41,7 @@ function isTrue(value) {
 }
 
 function parseTrustProxy(value, fallback) {
+  // mirrors express supported values: boolean, numeric hop count, or keyword string
   const raw = String(value ?? "").trim();
   if (!raw) return fallback;
 
@@ -49,11 +51,12 @@ function parseTrustProxy(value, fallback) {
   const maybeNum = Number(raw);
   if (Number.isInteger(maybeNum) && maybeNum >= 0) return maybeNum;
 
-  // Express also supports string forms like "loopback, linklocal, uniquelocal".
+  // express also supports string forms like loopback, linklocal, uniquelocal
   return raw;
 }
 
 function assertHttpsOrigins(serverOrigin, embedOrigins) {
+  // production mode requires HTTPS-only origins
   const targets = [serverOrigin, ...embedOrigins];
   for (const origin of targets) {
     const protocol = new URL(origin).protocol;
@@ -64,6 +67,7 @@ function assertHttpsOrigins(serverOrigin, embedOrigins) {
 }
 
 export function loadConfig(env = process.env) {
+  // centralized env parsing with validation to avoid wierd runtime behavior
   const port = toPositiveInt(env.PORT, 3000);
   const defaultServerOrigin = `http://localhost:${port}`;
   const isProduction = String(env.NODE_ENV || "").trim() === "production";

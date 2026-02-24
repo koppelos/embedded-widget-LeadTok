@@ -10,6 +10,7 @@ function toOrigin(value) {
 }
 
 export function createSecurity({ embedOrigins, serverOrigin, logger }) {
+  // normalize once; runtime checks can then stay cheap and predictable
   const allowedOrigins = new Set(
     embedOrigins
       .map((origin) => toOrigin(origin))
@@ -24,6 +25,7 @@ export function createSecurity({ embedOrigins, serverOrigin, logger }) {
   }
 
   function isAllowedEmbed(req, opts = {}) {
+    // accept either origin or referer checks
     const allowSelf = !!opts.allowSelf;
     const rawOrigin = String(req.headers.origin || "").trim();
     const rawReferer = String(req.headers.referer || "").trim();
@@ -37,6 +39,7 @@ export function createSecurity({ embedOrigins, serverOrigin, logger }) {
   }
 
   function forbidIfBlocked(req, res, opts = {}) {
+    // route level protection used by /frame and /sse endpoints.
     if (isAllowedEmbed(req, opts)) return false;
 
     logger("forbid_by_origin", {
@@ -50,6 +53,7 @@ export function createSecurity({ embedOrigins, serverOrigin, logger }) {
   }
 
   function setCorsIfAllowed(req, res, opts = {}) {
+    // reflect only allowlisted origins
     const allowSelf = !!opts.allowSelf;
     const origin = toOrigin(req.headers.origin);
     if (!origin) return;
@@ -62,6 +66,7 @@ export function createSecurity({ embedOrigins, serverOrigin, logger }) {
   }
 
   function frameAncestorsDirective() {
+    // used in CSP for iframe embedding restriction
     const list = [...allowedOrigins];
     return list.length ? `frame-ancestors ${list.join(" ")}` : "frame-ancestors 'self'";
   }

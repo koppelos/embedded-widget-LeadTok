@@ -11,12 +11,13 @@ export function parseSymbols(value, maxSymbols = 10) {
 }
 
 export function keyOf(base, symbolsArr) {
+  // sort symbols so EUR,USD and USD,EUR map to the same cache bucket
   const sorted = [...symbolsArr].sort().join(",");
   return `${normalizeBase(base)}__${sorted}`;
 }
 
 export function createRatesService({ fetchEveryMs, logger, fetchImpl = fetch }) {
-  const cache = new Map(); // key -> { last, lastFetchedAt, inflight }
+  const cache = new Map(); // key - last, lastFetchedAt, inflight
 
   async function fetchFrankfurter(base, symbolsArr) {
     const encodedBase = encodeURIComponent(base);
@@ -57,6 +58,7 @@ export function createRatesService({ fetchEveryMs, logger, fetchImpl = fetch }) 
   }
 
   async function getRates(base, symbolsArr) {
+    // per key refresh
     const normalizedBase = normalizeBase(base);
     const key = keyOf(normalizedBase, symbolsArr);
     const now = Date.now();
@@ -71,6 +73,7 @@ export function createRatesService({ fetchEveryMs, logger, fetchImpl = fetch }) 
     if (entry.last && !stale) return { data: entry.last, stale: false, key };
 
     if (!entry.inflight) {
+      // ensure only one upstream fetch runs per key at a time
       entry.inflight = (async () => {
         try {
           const fresh = await fetchFrankfurter(normalizedBase, symbolsArr);
@@ -89,6 +92,7 @@ export function createRatesService({ fetchEveryMs, logger, fetchImpl = fetch }) 
   }
 
   function getLastFetchedAt(key) {
+    // used for status/debug metadata sent over SSE
     return cache.get(key)?.lastFetchedAt || 0;
   }
 

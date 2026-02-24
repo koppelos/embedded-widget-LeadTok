@@ -1,5 +1,3 @@
-// public/frame.js
-
 const qs = new URLSearchParams(location.search);
 const base = (qs.get("base") || "PLN").toUpperCase();
 const symbols = (qs.get("symbols") || "EUR,USD,CHF,GBP,DKK").toUpperCase();
@@ -46,7 +44,7 @@ function parseEventData(event, label) {
   }
 }
 
-// --- Meta state ---
+//meta state
 let lastFetchText = "";
 let lastRatesMeta = { source: "", date: "", stale: false };
 
@@ -59,8 +57,8 @@ function renderMeta() {
   meta.textContent = parts.join(" • ");
 }
 
-// --- Trend state (per currency key) ---
-const prevValues = new Map(); // key -> number
+//trend state
+const prevValues = new Map();
 
 function trendOf(key, nextVal) {
   const prev = prevValues.get(key);
@@ -124,8 +122,6 @@ function render(r) {
   const order = [...preferred.filter((x) => keys.includes(x)), ...keys.filter((x) => !preferred.includes(x)).sort()];
 
   if (base === "PLN") {
-    // Frankfurter gives: 1 PLN = X EUR/USD...
-    // We want: 1 EUR/USD... = Y PLN  => Y = 1 / X
     for (const sym of order) {
       const x = Number(rates[sym]);
       if (!Number.isFinite(x) || x <= 0) continue;
@@ -133,7 +129,6 @@ function render(r) {
       addRow(`1 ${sym}`, sym, pln);
     }
   } else {
-    // Normal: 1 base = rate[sym] (units vary by row symbol)
     for (const sym of order) {
       const v = Number(rates[sym]);
       if (!Number.isFinite(v)) continue;
@@ -149,7 +144,7 @@ function render(r) {
   }
 }
 
-// --- SSE ---
+// SSE
 const sseUrl = new URL("/sse/rates", location.origin);
 sseUrl.searchParams.set("base", base);
 sseUrl.searchParams.set("symbols", symbols);

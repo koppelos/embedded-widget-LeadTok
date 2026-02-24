@@ -1,3 +1,4 @@
+// local dev runner - prepares safe env vars and starts nodemon for server auto-reload
 import { spawn } from "node:child_process";
 
 const port = String(process.env.PORT || "3000");
@@ -6,6 +7,7 @@ const extraOrigins = String(process.env.DEV_EMBED_ORIGINS || "")
   .split(",")
   .map((v) => v.trim())
   .filter(Boolean);
+
 const embedOrigins = [serverOrigin, ...extraOrigins].join(",");
 
 const env = {
