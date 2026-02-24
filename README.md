@@ -1,5 +1,5 @@
 ## TL;DR (ENGLISH BELOW)
-Embedded widget kursów walut dla stron partnerskich. Host ładuje `widget.js`, który montuje odizolowany iframe (`/frame`) i odbiera aktualizacje kursów w czasie rzeczywistym przez SSE (`/sse/rates`) z backendu Node.js + Express. Backend cyklicznie pobiera dane z API Frankfurter, cache’uje je i rozsyła do klientów.
+Embedded widget kursów walut dla stron klientów. Host ładuje `widget.js`, który montuje odizolowany iframe (`/frame`) i odbiera aktualizacje kursów w czasie rzeczywistym przez SSE (`/sse/rates`) z backendu Node.js + Express. Backend cyklicznie pobiera dane z API Frankfurter, cache’uje je i rozsyła do klientów.
 
 ---
 
