@@ -1,18 +1,17 @@
-# LeadTok FX Embed
-Embeddable FX widget delivered as a third-party script with iframe isolation and SSE updates.  
-Flow: `widget.js` -> iframe (`/frame`) -> SSE (`/sse/rates`).
+# LeadTok FX Rate Embed
+Embeddable PLN FX rate as iframe isolation and SSE updates.  
 
 ## Live Demo
-- Demo page: `<DEMO_PAGE_URL>`
+- Demo page: `leadtok-embed-remi-koppel.web.app`
 - Backend runs on Cloud Run and is protected by a domain allowlist (`EMBED_ORIGINS`).
-- If you want to embed it on your own test page, send me the exact origin URL and I will add it to the allowlist.
+- Can be embedded on other pages, but needs to be added to allowlist on cloud.
 
 ## Client Snippet
 Minimal:
 
 ```html
 <div id="fx-widget"></div>
-<script src="https://<YOUR_BACKEND_DOMAIN>/widget.js" defer></script>
+<script src="https://<BACKEND_DOMAIN>/widget.js" defer></script>
 ```
 
 Optional config:
@@ -24,7 +23,7 @@ Optional config:
   data-symbols="EUR,USD,CHF,GBP,DKK"
   data-debug="0"
 ></div>
-<script src="https://<YOUR_BACKEND_DOMAIN>/widget.js" defer></script>
+<script src="https://<BACKEND_DOMAIN>/widget.js" defer></script>
 ```
 
 Defaults:
@@ -32,6 +31,7 @@ Defaults:
 - `symbols=EUR,USD,CHF,GBP,DKK`
 
 ## Local Run
+Clone the repo and:
 ```bash
 cd fx-embed-sse
 npm i
@@ -48,7 +48,7 @@ Open:
 - Real-time delivery: SSE
 - Upstream rates: Frankfurter `/latest` (poll + cache)
 - Cache key: `(base + symbols)` (prevents config mixing)
-- SSE connection limits per IP and globally
+
 
 ## Security
 - `EMBED_ORIGINS` allowlist gates `/frame` and `/sse/rates`
@@ -70,7 +70,7 @@ Key variables:
 - `MAX_SSE_GLOBAL`
 - `MAX_SSE_PER_IP`
 
-## Deploy (Backend only)
+## Deploy 
 This backend is provider-agnostic. You can deploy it to any platform that runs Node.js containers/processes (for example: Cloud Run, Fly.io, Render, Railway, AWS ECS/Fargate, Azure Container Apps, or your own VM/Kubernetes).
 
 Minimum requirements:
@@ -78,8 +78,6 @@ Minimum requirements:
 - Set `SERVER_ORIGIN` to your public backend origin.
 - Set `EMBED_ORIGINS` to exact client site origins (allowlist).
 - Run `npm start`.
-
-Cloud Run is one valid option, not a requirement.
 
 ## Decisions / Trade-offs
 - Iframe over Web Components: stronger CSS/JS isolation for unknown host pages.
@@ -97,6 +95,12 @@ Cloud Run is one valid option, not a requirement.
 - Demo host is allowlisted -> widget works.
 - Evil host is not allowlisted -> `/frame` and `/sse/rates` return `403`.
 
-Reproduce locally:
-1. Open `http://localhost:3000/demo` (works).
-2. Serve `evil/evil.html` from another origin/port (blocked with `403`).
+If evil host is running at: 
+```cd evil
+python3 -m http.server 5173
+#open http://localhost:5173/evil.html
+```
+Add the origin to `EMBED_ORIGINS` when starting the local server.
+`EMBED_ORIGINS="http://localhost:3000,http://localhost:5173" npm run dev`
+
+
