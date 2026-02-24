@@ -7,6 +7,7 @@ function makeReq({ query = {}, headers = {}, ip = "127.0.0.1" } = {}) {
   const req = new EventEmitter();
   req.query = query;
   req.headers = headers;
+  req.ip = ip;
   req.socket = { remoteAddress: ip };
   return req;
 }
@@ -180,6 +181,7 @@ test("sse route uses defaults, sets SSE headers and initializes client", async (
   assert.equal(res.getHeader("connection"), "keep-alive");
   assert.equal(res.flushed, true);
   assert.equal(calls.sendInitial, 1);
+  assert.equal(calls.addClient.ip, "127.0.0.1");
 });
 
 test("sse route returns 400 when symbols are empty", async () => {
@@ -261,4 +263,17 @@ test("staticHeaders sets CORP only for widget.js", () => {
 
   assert.equal(resA.getHeader("cross-origin-resource-policy"), "cross-origin");
   assert.equal(resB.getHeader("cross-origin-resource-policy"), undefined);
+});
+
+test("sse route uses req.ip even if x-forwarded-for is spoofed", async () => {
+  const { handlers, calls } = buildDeps();
+  const req = makeReq({
+    query: {},
+    ip: "10.0.0.5",
+    headers: { "x-forwarded-for": "198.51.100.123" },
+  });
+  const res = makeRes();
+
+  await handlers.sseRates(req, res);
+  assert.equal(calls.addClient.ip, "10.0.0.5");
 });

@@ -86,13 +86,14 @@ test("forbidIfBlocked rejects malformed or null origin headers", () => {
   assert.ok(logs.length >= 2);
 });
 
-test("direct requests with no origin/referer are allowed", () => {
+test("direct requests with no origin/referer are blocked by default", () => {
   const security = buildSecurity();
   const req = makeReq({ origin: "", referer: "" });
   const res = makeRes();
 
   const blocked = security.forbidIfBlocked(req, res, { route: "/frame" });
-  assert.equal(blocked, false);
+  assert.equal(blocked, true);
+  assert.equal(res.code, 403);
 });
 
 test("allowSelf allows configured server origin only", () => {

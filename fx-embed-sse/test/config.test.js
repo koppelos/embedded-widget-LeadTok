@@ -8,6 +8,7 @@ test("loadConfig uses safe defaults in non-production", () => {
   assert.equal(cfg.serverOrigin, "http://localhost:3000");
   assert.deepEqual(cfg.embedOrigins, ["http://localhost:3000"]);
   assert.equal(cfg.strictHttps, false);
+  assert.equal(cfg.trustProxy, false);
 });
 
 test("loadConfig rejects wildcard origins", () => {
@@ -47,6 +48,7 @@ test("loadConfig enforces https in production", () => {
   assert.equal(ok.strictHttps, true);
   assert.equal(ok.serverOrigin, "https://widget.example");
   assert.deepEqual(ok.embedOrigins, ["https://client.example"]);
+  assert.equal(ok.trustProxy, 1);
 });
 
 test("loadConfig supports explicit REQUIRE_HTTPS", () => {
@@ -59,4 +61,14 @@ test("loadConfig supports explicit REQUIRE_HTTPS", () => {
       }),
     /HTTPS required/i
   );
+});
+
+test("loadConfig allows explicit trust-proxy overrides", () => {
+  const cfg = loadConfig({
+    TRUST_PROXY: "2",
+    SERVER_ORIGIN: "http://localhost:4000",
+    EMBED_ORIGINS: "http://localhost:4000",
+  });
+
+  assert.equal(cfg.trustProxy, 2);
 });

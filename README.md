@@ -42,6 +42,14 @@ npm run dev
 Open:
 - `http://localhost:3000/demo`
 
+Local dev security defaults:
+- `EMBED_ORIGINS=http://localhost:3000`
+
+To temporarily allow extra local hosts (for example `5173`), use:
+```bash
+DEV_EMBED_ORIGINS=http://localhost:5173 npm run dev
+```
+
 ## Architecture
 - Backend: Node.js + Express
 - Embed isolation: iframe
@@ -64,6 +72,7 @@ Use `fx-embed-sse/.env.example` as a template.
 Key variables:
 - `SERVER_ORIGIN`
 - `EMBED_ORIGINS`
+- `TRUST_PROXY`
 - `FETCH_EVERY_MS`
 - `BROADCAST_EVERY_MS`
 - `HEARTBEAT_MS`
@@ -100,7 +109,6 @@ If evil host is running at:
 python3 -m http.server 5173
 #open http://localhost:5173/evil.html
 ```
-Add the origin to `EMBED_ORIGINS` when starting the local server.
-`EMBED_ORIGINS="http://localhost:3000,http://localhost:5173" npm run dev`
-
-
+It should be blocked by default.  
+Only if you explicitly opt in with:
+`DEV_EMBED_ORIGINS=http://localhost:5173 npm run dev`

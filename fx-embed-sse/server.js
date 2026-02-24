@@ -18,6 +18,8 @@ const config = loadConfig(process.env);
 const logEvent = createLogger();
 
 const app = express();
+app.set("trust proxy", config.trustProxy);
+
 const ratesService = createRatesService({
   fetchEveryMs: config.fetchEveryMs,
   logger: logEvent,
@@ -53,6 +55,7 @@ app.use(
     frameguard: false,
     crossOriginResourcePolicy: false,
     crossOriginEmbedderPolicy: false,
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
   })
 );
 

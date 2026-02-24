@@ -18,6 +18,7 @@ export function createSseHub({
   const lastBroadcastTsByKey = new Map(); // key -> ts
 
   let broadcastTimer = null;
+  let broadcastInFlight = false;
 
   function canAccept(ip) {
     if (clients.size >= maxGlobalConnections) {
@@ -139,7 +140,11 @@ export function createSseHub({
   function startBroadcast() {
     if (broadcastTimer) return;
     broadcastTimer = setInterval(() => {
-      void broadcastTick();
+      if (broadcastInFlight) return;
+      broadcastInFlight = true;
+      void Promise.resolve(broadcastTick()).finally(() => {
+        broadcastInFlight = false;
+      });
     }, broadcastEveryMs);
   }
 
@@ -147,6 +152,7 @@ export function createSseHub({
     if (!broadcastTimer) return;
     clearInterval(broadcastTimer);
     broadcastTimer = null;
+    broadcastInFlight = false;
   }
 
   return {

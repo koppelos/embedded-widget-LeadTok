@@ -34,6 +34,18 @@ function fmt(x) {
   return Number(x).toFixed(4);
 }
 
+function parseEventData(event, label) {
+  try {
+    return JSON.parse(event.data);
+  } catch (error) {
+    setBadge("bad payload", "err");
+    if (debug && dbg) {
+      dbg.textContent = `${label} parse error: ${String(error?.message || error)}`;
+    }
+    return null;
+  }
+}
+
 // --- Meta state ---
 let lastFetchText = "";
 let lastRatesMeta = { source: "", date: "", stale: false };
@@ -145,7 +157,8 @@ sseUrl.searchParams.set("symbols", symbols);
 const es = new EventSource(sseUrl.toString());
 
 es.addEventListener("status", (e) => {
-  const s = JSON.parse(e.data);
+  const s = parseEventData(e, "status");
+  if (!s) return;
 
   if (s.stage === "connected") setBadge(s.stale ? "connected (stale)" : "connected", s.stale ? "warn" : "ok");
   else if (s.stage === "error") setBadge("error", "err");
@@ -157,7 +170,8 @@ es.addEventListener("status", (e) => {
 });
 
 es.addEventListener("rates", (e) => {
-  const r = JSON.parse(e.data);
+  const r = parseEventData(e, "rates");
+  if (!r) return;
   setBadge(r.stale ? "connected (stale)" : "connected", r.stale ? "warn" : "ok");
   render(r);
 });

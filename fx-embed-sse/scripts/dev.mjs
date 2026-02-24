@@ -2,13 +2,19 @@ import { spawn } from "node:child_process";
 
 const port = String(process.env.PORT || "3000");
 const serverOrigin = `http://localhost:${port}`;
+const extraOrigins = String(process.env.DEV_EMBED_ORIGINS || "")
+  .split(",")
+  .map((v) => v.trim())
+  .filter(Boolean);
+const embedOrigins = [serverOrigin, ...extraOrigins].join(",");
 
 const env = {
   ...process.env,
   NODE_ENV: "development",
   REQUIRE_HTTPS: "false",
+  TRUST_PROXY: "false",
   SERVER_ORIGIN: serverOrigin,
-  EMBED_ORIGINS: `${serverOrigin},http://localhost:5173`,
+  EMBED_ORIGINS: embedOrigins,
 };
 
 console.log(

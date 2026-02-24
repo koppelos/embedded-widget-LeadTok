@@ -33,8 +33,7 @@ export function createSecurity({ embedOrigins, serverOrigin, logger }) {
     const allowed = resolveAllowed(allowSelf);
     const byOrigin = origin && allowed.has(origin);
     const byReferer = refererOrigin && allowed.has(refererOrigin);
-    const direct = !rawOrigin && !rawReferer;
-    return byOrigin || byReferer || direct;
+    return byOrigin || byReferer;
   }
 
   function forbidIfBlocked(req, res, opts = {}) {

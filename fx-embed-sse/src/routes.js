@@ -1,8 +1,8 @@
 import path from "path";
 
 export function getClientIp(req) {
-  const xff = String(req.headers["x-forwarded-for"] || "");
-  return xff.split(",")[0].trim() || req.socket.remoteAddress || "unknown";
+  if (req.ip) return String(req.ip);
+  return req.socket.remoteAddress || "unknown";
 }
 
 export function staticHeaders(res, filePath) {

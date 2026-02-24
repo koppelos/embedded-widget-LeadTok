@@ -39,6 +39,20 @@ function isTrue(value) {
   return normalized === "1" || normalized === "true" || normalized === "yes";
 }
 
+function parseTrustProxy(value, fallback) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return fallback;
+
+  if (isTrue(raw)) return true;
+  if (["0", "false", "no"].includes(raw.toLowerCase())) return false;
+
+  const maybeNum = Number(raw);
+  if (Number.isInteger(maybeNum) && maybeNum >= 0) return maybeNum;
+
+  // Express also supports string forms like "loopback, linklocal, uniquelocal".
+  return raw;
+}
+
 function assertHttpsOrigins(serverOrigin, embedOrigins) {
   const targets = [serverOrigin, ...embedOrigins];
   for (const origin of targets) {
@@ -52,8 +66,9 @@ function assertHttpsOrigins(serverOrigin, embedOrigins) {
 export function loadConfig(env = process.env) {
   const port = toPositiveInt(env.PORT, 3000);
   const defaultServerOrigin = `http://localhost:${port}`;
+  const isProduction = String(env.NODE_ENV || "").trim() === "production";
 
-  const strictHttps = isTrue(env.REQUIRE_HTTPS) || String(env.NODE_ENV || "").trim() === "production";
+  const strictHttps = isTrue(env.REQUIRE_HTTPS) || isProduction;
   const serverOrigin = parseExactOrigin(env.SERVER_ORIGIN || defaultServerOrigin, "SERVER_ORIGIN");
   const embedOrigins = splitCsv(env.EMBED_ORIGINS || serverOrigin)
     .map((value, idx) => parseExactOrigin(value, `EMBED_ORIGINS[${idx}]`));
@@ -65,6 +80,7 @@ export function loadConfig(env = process.env) {
     embedOrigins,
     serverOrigin,
     strictHttps,
+    trustProxy: parseTrustProxy(env.TRUST_PROXY, isProduction ? 1 : false),
     fetchEveryMs: toPositiveInt(env.FETCH_EVERY_MS, 60_000),
     broadcastEveryMs: toPositiveInt(env.BROADCAST_EVERY_MS, 2_000),
     heartbeatMs: toPositiveInt(env.HEARTBEAT_MS, 15_000),
